@@ -1,19 +1,45 @@
-from flask import Flask , request , jsonify
-from flask_restful import Resource  , Api
-from flask_jwt import JWT , jwt_required
-from dbConnection import connection
-from authenticate import authenticatea
-from security import authenticate
+
+
+from flask import Flask , render_template
+from os import environ
+from datetime import datetime
 
 app = Flask(__name__)
-app.secret_key = "vivek"
-api = Api(app)
 
-c, con = connection()
+@app.route('/')
+@app.route('/home')
+def home():
+    """Renders the home page."""
+    return render_template(
+        'index.html',
+        title='Home Page',
+        year=datetime.now().year,
+    )
 
-@app.route('/login' , methods = ['POST'])
-def authenticate():
-    return authenticatea(request.get_json())
+@app.route('/contact')
+def contact():
+    """Renders the contact page."""
+    return render_template(
+        'contact.html',
+        title='Contact',
+        year=datetime.now().year,
+        message='Your contact page.'
+    )
 
+@app.route('/about')
+def about():
+    """Renders the about page."""
+    return render_template(
+        'about.html',
+        title='About',
+        year=datetime.now().year,
+        message='Your application description page.'
+    )
 
-app.run(port = 5000 , debug = True)
+if __name__ == '__main__':
+    HOST = environ.get('SERVER_HOST', 'localhost')
+    try:
+        PORT = int(environ.get('SERVER_PORT', '5555'))
+    except ValueError:
+        PORT = 5555
+    app.run(HOST, PORT)
